@@ -10,12 +10,13 @@ void printWithAnimation(const char *text);
 void skeletonStatus();
 void ratStatus();
 void level_up(int *exp, int *level);
-#define MAX_ITEMS 10 // Maximum items in inventory
+#define MAX_ITEMS 2 // Maximum items in inventory
 
 // Define an Item structure
 struct Item {
     char nameItem[30];  // Name of the item
     int quantity;   // Quantity of the item
+    char effect[20];
 };
 
 // Define the Inventory structure
@@ -46,7 +47,7 @@ struct PlayerClass selectClass() {
     const char *classSelect = "\t\t  - Attack: 20\t\t\t  - Attack: 25\t\t\t  - Attack: 15\n\t\t  - Health: 150\t\t\t  - Health: 100\t\t\t  - Health: 120\n\t\t  - Defense: 15\t\t\t  - Defense: 5\t\t\t  - Defense: 10\n\n";
     delay(1);
     printf("\t\t\t\tEnter your choice (1-3): ");
-    scanf("%d", &choice);
+    scanf(" %d", &choice);
 
     // Assign class stats based on choice
     switch (choice) {
@@ -85,7 +86,7 @@ void initInventory(struct Inventory *inventory) {
     inventory->itemCount = 0; // Initialize with no items
 }
 
-void addItem(struct Inventory *inventory, const char *nameItem, int quantity) {
+void addItem(struct Inventory *inventory, const char *nameItem, int quantity, const char *effect) {
     // Check if the item is already in the inventory
     for (int i = 0; i < inventory->itemCount; i++) {
         if (strcmp(inventory->items[i].nameItem, nameItem) == 0) {
@@ -138,13 +139,13 @@ void displayInventory(const struct Inventory *inventory) {
 }
 
 int main() {
-    // color system
+    // color system green
     system("COLOR 0a");
 
     // Player selects a class
     struct PlayerClass pc = selectClass();
 
-    // color system
+    // color system gold
     system("COLOR 06");
 
     // player information
@@ -156,6 +157,22 @@ int main() {
     int exp = 0;
     struct Inventory playerInventory;
     initInventory(&playerInventory);
+    addItem(&playerInventory, "Health Potion", 2, "heal");
+    addItem(&playerInventory, "Strength Potion", 2, "boost_attack");
+
+    /*
+    addItem(&playerInventory, "Health Potion", 5, "heal");      // add item
+    displayInventory(&playerInventory);                 // show item
+    removeItem(&playerInventory, "Health Potion", 2);   // remove item
+    */
+
+    /*
+    Items:
+                  +3 dmg          +6 dmg        +12 dmg       +18 dmg         +24 dmg         +30 dmg
+    Weapons = "Wooden Sword", "Stone Sword", "Iron Sword", "Cobalt Sword", "Diamond Sword", "God Sword"
+                    +10 Health             +25 Health            +10 Defense             +20 Defense               +5 damage               +10 damage
+    Potions = "Small Health Potion", "Large Health Potion", "Small Defense Potion", "Large Defense Potion", "Small Strength Potion", "Large Strength Potion"
+    */
 
     // player answer
     char answer = 'd';
@@ -172,23 +189,89 @@ int main() {
     int rat_defense = 1;
     int rat_damage = 1;
 
+    const char *message1 = "Villager: Hello Adventurer I'm a normal villager in here\n";
+    const char *message2 = "Villager: So... I need you to help me something, did you see?\n";
+    const char *message3 = "Villager: Yeah! Those skeleton it's bother me so much when i'm doing something\n";
+    const char *message4 = "Villager: You need to kill those skeleton for me please thank you!\n\n";
+    delay(2);
+    /*
+    printWithAnimation(message1);
+    delay(1);
+    printWithAnimation(message2);
+    delay(1);
+    printWithAnimation(message3);
+    delay(1);
+    printWithAnimation(message4);
+    delay(1);
+    */
+
     skeletonStatus(); // skeleton pic
     scanf(" %c", &answer);
     printf("\n");
 
-    if (answer == 'f') {
-        // Flee logic
+    if (answer == 'f') { // flee option
         answer = 'd';
-        const char *answer_s = "Log: You ran away from Skeleton! And you found a Village\n";
-        printf("===============================\n");
-        printWithAnimation(answer_s);
-        printf("===============================\n");
+        const char *answer_flee = "Log: You ran away from Skeleton! And you found a Village And have something moved!\n";
+        const char *message1 = "Villager: Hello Adventurer I'm a normal villager in here\n";
+        const char *message2 = "Villager: So... I need you to help me something, did you see?\n";
+        const char *message3 = "Villager: Yeah! Those skeleton it's bother me so much when i'm doing something\n";
+        const char *message4 = "Villager: You need to kill those skeleton for me please thank you!\n\n";
+        delay(2);
+        /*
+        printf("=========================================\n");
+        printWithAnimation(answer_flee);
+        printWithAnimation(message1);
+        delay(1);
+        printWithAnimation(message2);
+        delay(1);
+        printWithAnimation(message3);
+        delay(1);
+        printWithAnimation(message4);
+        delay(1);
+        printf("=========================================\n");
+        */
         ratStatus(); // rat pic
         scanf(" %c", &answer);
         printf("\n");
+        if (answer == 'b') { // rat attack
+        answer = 'd';
+        while (1) {
+            if (health <= 0) {
+                printf("=================================\n");
+                printf("\tGame over!\n");
+                printf("=================================\n");
+                break;
+            }
+
+            rat_health = (rat_health - (damage - rat_defense));
+            health = (health - (rat_damage - defense));
+
+            delay(1);
+            printf("====================================\n");
+            printf("[Attack](a) | [Inv](i) | [Flee](f): \n");
+            scanf(" %c", &answer);
+            if (answer == 'a') {
+                answer = 'd';
+                printf("[%d]Rat, Health: %d, Damage: %d\n", rat_level, rat_health, rat_damage);
+                printf("[%d]Player, Health: %d, Damage: %d\n", level, health, damage);
+                if (skeleton_health <= 0) {
+                    delay(1);
+                    exp += 5;
+                    printf("=================================\n");
+                    printf("Log: Rat dead, Gain %d Exp!\n\n", exp);
+                    level_up(&exp, &level);  // Fix: Pass exp and level by reference
+                }
+            }
+            else if (answer == 'i') {
+                answer = 'd';
+
+                displayInventory(&playerInventory);
+            }
+        }
     }
-    else if (answer == 'b') {
-        // Battle logic
+    }
+
+    else if (answer == 'b') { // skeleton attack
         answer = 'd';
         while (1) {
             if (health <= 0) {
@@ -202,7 +285,7 @@ int main() {
             health = (health - (skeleton_damage - defense));
 
             delay(1);
-            printf("=================================\n");
+            printf("====================================\n");
             printf("[Attack](a) | [Inv](i) | [Flee](f): \n");
             scanf(" %c", &answer);
             if (answer == 'a') {
@@ -221,6 +304,8 @@ int main() {
             else if (answer == 'i') {
                 answer = 'd';
                 displayInventory(&playerInventory);
+
+
             }
         }
     }
