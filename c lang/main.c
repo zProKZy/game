@@ -1,29 +1,22 @@
 #include <math.h>
+#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h>
+#include <windows.h>
 
-void delay(int second);
-void printWithAnimation(const char *text);
+void getConsoleSize(int *width, int *height);
+void printWithAnimation(const char *text); // animation text chatgpt
+void setColor(int textColor, int bgColor);
+void level_up(int *exp, int *level); // level func
+void gotoxy(int x, int y);
+void delay(int second); // delay func
 void skeletonStatus();
 void ratStatus();
-void level_up(int *exp, int *level);
-#define MAX_ITEMS 2 // Maximum items in inventory
-
-// Define an Item structure
-struct Item {
-    char nameItem[30];  // Name of the item
-    int quantity;   // Quantity of the item
-    char effect[20];
-};
-
-// Define the Inventory structure
-struct Inventory {
-    struct Item items[MAX_ITEMS]; // Array to store items
-    int itemCount;                // Total number of different items
-};
+void main_game();
+void settins();
+void credits();
 
 // Define a structure for a class
 struct PlayerClass {
@@ -44,9 +37,10 @@ struct PlayerClass selectClass() {
     printf("\t\t[1] Warrior\t\t\t");
     printf("[2] Mage\t\t\t");
     printf("[3] Archer\n");
+    delay(2);
     const char *classSelect = "\t\t  - Attack: 20\t\t\t  - Attack: 25\t\t\t  - Attack: 15\n\t\t  - Health: 150\t\t\t  - Health: 100\t\t\t  - Health: 120\n\t\t  - Defense: 15\t\t\t  - Defense: 5\t\t\t  - Defense: 10\n\n";
-    delay(1);
-    printf("\t\t\t\tEnter your choice (1-3): ");
+    // printWithAnimation(classSelect);
+    printf("\t\t\t\t\t\t    [1-3]: ");
     scanf(" %d", &choice);
 
     // Assign class stats based on choice
@@ -56,123 +50,122 @@ struct PlayerClass selectClass() {
             pc.health = 150;
             pc.attackPower = 20;
             pc.defense = 15;
+            system("cls");
             break;
         case 2:
             strcpy(pc.name, "Mage");
             pc.health = 100;
             pc.attackPower = 25;
             pc.defense = 5;
+            system("cls");
             break;
         case 3:
             strcpy(pc.name, "Archer");
             pc.health = 120;
             pc.attackPower = 15;
             pc.defense = 10;
+            system("cls");
             break;
         default:
-            printf("Invalid choice, defaulting to Warrior.\n");
             strcpy(pc.name, "Warrior");
             pc.health = 150;
             pc.attackPower = 20;
             pc.defense = 15;
+            system("cls");
             break;
     }
 
     return pc;
 }
 
-// Inventory functions
-void initInventory(struct Inventory *inventory) {
-    inventory->itemCount = 0; // Initialize with no items
-}
-
-void addItem(struct Inventory *inventory, const char *nameItem, int quantity, const char *effect) {
-    // Check if the item is already in the inventory
-    for (int i = 0; i < inventory->itemCount; i++) {
-        if (strcmp(inventory->items[i].nameItem, nameItem) == 0) {
-            inventory->items[i].quantity += quantity; // Update quantity
-            printf("%d %s added to inventory.\n", quantity, nameItem);
-            return;
-        }
-    }
-    // Add new item if space is available
-    if (inventory->itemCount < MAX_ITEMS) {
-        strcpy(inventory->items[inventory->itemCount].nameItem, nameItem);
-        inventory->items[inventory->itemCount].quantity = quantity;
-        inventory->itemCount++;
-        printf("%d %s added to inventory.\n", quantity, nameItem);
-    } else {
-        printf("Inventory is full!\n");
-    }
-}
-
-void removeItem(struct Inventory *inventory, const char *nameItem, int quantity) {
-    for (int i = 0; i < inventory->itemCount; i++) {
-        if (strcmp(inventory->items[i].nameItem, nameItem) == 0) {
-            if (inventory->items[i].quantity >= quantity) {
-                inventory->items[i].quantity -= quantity;
-                printf("%d %s removed from inventory.\n", quantity, nameItem);
-                if (inventory->items[i].quantity == 0) {
-                    // Shift the remaining items to avoid empty spaces
-                    for (int j = i; j < inventory->itemCount - 1; j++) {
-                        inventory->items[j] = inventory->items[j + 1];
-                    }
-                    inventory->itemCount--;
-                }
-            } else {
-                printf("Not enough %s to remove!\n", nameItem);
-            }
-            return;
-        }
-    }
-    printf("%s not found in inventory.\n", nameItem);
-}
-
-void displayInventory(const struct Inventory *inventory) {
-    printf("Inventory:\n");
-    for (int i = 0; i < inventory->itemCount; i++) {
-        printf("  - %s (x%d)\n", inventory->items[i].nameItem, inventory->items[i].quantity);
-    }
-    if (inventory->itemCount == 0) {
-        printf("  [empty]\n");
-    }
-}
-
 int main() {
-    // color system green
-    system("COLOR 0a");
+    char ch;
+    int x, y = 10, consoleWidth, consoleHeight;
+    int select = 1;
+    int bgcolor = 6; // Green background color
 
+    // Get the console size and calculate the center x coordinate
+    getConsoleSize(&consoleWidth, &consoleHeight);
+    x = (consoleWidth / 2) - 5;  // Adjust -5 to align the menu text correctly
+
+    do {
+        // display the menu
+        system("cls");
+
+        // Display menu items with highlighting based on selection
+        printf("\n\n\n\n\n\n\t\t\t\t\t\t\t-= Game =-");
+        gotoxy(x, y);
+        setColor(select == 1 ? 15 : 7, select == 1 ? bgcolor : 0);
+        printf("  Start     ");
+
+        gotoxy(x, y + 1);
+        setColor(select == 2 ? 15 : 7, select == 2 ? bgcolor : 0);
+        printf("  Settings  ");
+
+        gotoxy(x, y + 2);
+        setColor(select == 3 ? 15 : 7, select == 3 ? bgcolor : 0);
+        printf("  Credits   ");
+
+        gotoxy(x, y + 3);
+        setColor(select == 4 ? 15 : 7, select == 4 ? bgcolor : 0);
+        printf("  Exit      ");
+
+        // Reset color after menu
+        setColor(7, 0);
+
+        // Get user input for navigation
+        ch = getch();
+        if (ch == -32) {
+            ch = getch();
+            switch (ch) {
+                case 72: // arrow up
+                    select--;
+                    break;
+                case 80: // arrow down
+                    select++;
+                    break;
+            }
+        }
+
+        // Wrap around menu selection
+        if (select > 4) select = 1;
+        if (select < 1) select = 4;
+        if (ch == 13) { // if press Enter
+            switch (select) {
+                case 1:
+                    // start game
+                    system("cls");
+                    main_game();
+                    break;
+                case 2:
+                    // settings
+                    system("cls");
+                    settins();
+                    break;
+                case 3:
+                    // credits
+                    system("cls");
+                    credits();
+                    break;
+                case 4:
+                    exit(0);
+                    break;
+            }
+        }
+    } while (ch != 27);  // 27 is the ASCII code for the ESC key
+
+    return 0;
+}
+
+void main_game() { // menu 1
     // Player selects a class
     struct PlayerClass pc = selectClass();
-
-    // color system gold
-    system("COLOR 06");
 
     // player information
     int health = pc.health;
     int damage = pc.attackPower;
     int defense = pc.defense;
-    int money = 0;
-    int level = 0;
-    int exp = 0;
-    struct Inventory playerInventory;
-    initInventory(&playerInventory);
-    addItem(&playerInventory, "Health Potion", 2, "heal");
-    addItem(&playerInventory, "Strength Potion", 2, "boost_attack");
-
-    /*
-    addItem(&playerInventory, "Health Potion", 5, "heal");      // add item
-    displayInventory(&playerInventory);                 // show item
-    removeItem(&playerInventory, "Health Potion", 2);   // remove item
-    */
-
-    /*
-    Items:
-                  +3 dmg          +6 dmg        +12 dmg       +18 dmg         +24 dmg         +30 dmg
-    Weapons = "Wooden Sword", "Stone Sword", "Iron Sword", "Cobalt Sword", "Diamond Sword", "God Sword"
-                    +10 Health             +25 Health            +10 Defense             +20 Defense               +5 damage               +10 damage
-    Potions = "Small Health Potion", "Large Health Potion", "Small Defense Potion", "Large Defense Potion", "Small Strength Potion", "Large Strength Potion"
-    */
+    int money = 0, level = 0, exp = 0;
 
     // player answer
     char answer = 'd';
@@ -194,7 +187,7 @@ int main() {
     const char *message3 = "Villager: Yeah! Those skeleton it's bother me so much when i'm doing something\n";
     const char *message4 = "Villager: You need to kill those skeleton for me please thank you!\n\n";
     delay(2);
-    /*
+
     printWithAnimation(message1);
     delay(1);
     printWithAnimation(message2);
@@ -203,7 +196,7 @@ int main() {
     delay(1);
     printWithAnimation(message4);
     delay(1);
-    */
+
 
     skeletonStatus(); // skeleton pic
     scanf(" %c", &answer);
@@ -217,7 +210,7 @@ int main() {
         const char *message3 = "Villager: Yeah! Those skeleton it's bother me so much when i'm doing something\n";
         const char *message4 = "Villager: You need to kill those skeleton for me please thank you!\n\n";
         delay(2);
-        /*
+
         printf("=========================================\n");
         printWithAnimation(answer_flee);
         printWithAnimation(message1);
@@ -229,10 +222,11 @@ int main() {
         printWithAnimation(message4);
         delay(1);
         printf("=========================================\n");
-        */
+
         ratStatus(); // rat pic
         scanf(" %c", &answer);
         printf("\n");
+        system("cls");
         if (answer == 'b') { // rat attack
         answer = 'd';
         while (1) {
@@ -265,7 +259,6 @@ int main() {
             else if (answer == 'i') {
                 answer = 'd';
 
-                displayInventory(&playerInventory);
             }
         }
     }
@@ -303,14 +296,27 @@ int main() {
             }
             else if (answer == 'i') {
                 answer = 'd';
-                displayInventory(&playerInventory);
-
-
             }
         }
     }
+}
 
-    return 0;
+void settins() { // menu 2
+    printf("Coming soon...");
+    getch();
+}
+
+void credits() { // menu 3
+    printf("Director: zProKZy\n");
+    delay(1);
+    printf("Written: zProKZy\n");
+    delay(1);
+    printf("Producer: zProKZy\n");
+    delay(1);
+    printf("Executive Producer: zProKZy\n\n");
+    delay(1);
+    printf("Press any key to back");
+    getch();
 }
 
 void skeletonStatus() {
@@ -378,4 +384,24 @@ void printWithAnimation(const char *text) {
         fflush(stdout); // force flush to display each character immediately
         usleep(50000);  // delay of 50 milliseconds between each character
     }
+}
+
+void gotoxy(int x, int y) {
+    COORD coord;
+    coord.X = x;
+    coord.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
+
+// Function to set text color and background color
+void setColor(int textColor, int bgColor) {
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (bgColor << 4) | textColor);
+}
+
+// Function to get the console width and height
+void getConsoleSize(int *width, int *height) {
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+    *width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+    *height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
 }
