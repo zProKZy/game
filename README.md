@@ -1,5 +1,10 @@
 Update 24/10/2567
   - Inventory system (in progress)
-  - battle system (in progress)
-  - level up system
+  - Battle system (in progress)
+  - Level up system
   - Player class
+
+Update 28/10/2567
+  - Add menu system (in progress)
+  - Add villager script
+  - Animation print text
