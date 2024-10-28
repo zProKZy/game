@@ -33,13 +33,13 @@ struct PlayerClass selectClass() {
 
     // Display class options
     printf("\n");
-    printf("\t\t\t\t\t\t-=CHOOSE YOUR CLASS =-\n\n");
+    printf("\t\t\t\t\t\t-= CHOOSE YOUR CLASS =-\n\n");
     printf("\t\t[1] Warrior\t\t\t");
     printf("[2] Mage\t\t\t");
     printf("[3] Archer\n");
     delay(2);
     const char *classSelect = "\t\t  - Attack: 20\t\t\t  - Attack: 25\t\t\t  - Attack: 15\n\t\t  - Health: 150\t\t\t  - Health: 100\t\t\t  - Health: 120\n\t\t  - Defense: 15\t\t\t  - Defense: 5\t\t\t  - Defense: 10\n\n";
-    // printWithAnimation(classSelect);
+    printWithAnimation(classSelect);
     printf("\t\t\t\t\t\t    [1-3]: ");
     scanf(" %d", &choice);
 
@@ -49,28 +49,28 @@ struct PlayerClass selectClass() {
             strcpy(pc.name, "Warrior");
             pc.health = 150;
             pc.attackPower = 20;
-            pc.defense = 15;
+            pc.defense;
             system("cls");
             break;
         case 2:
             strcpy(pc.name, "Mage");
             pc.health = 100;
             pc.attackPower = 25;
-            pc.defense = 5;
+            pc.defense;
             system("cls");
             break;
         case 3:
             strcpy(pc.name, "Archer");
             pc.health = 120;
             pc.attackPower = 15;
-            pc.defense = 10;
+            pc.defense;
             system("cls");
             break;
         default:
             strcpy(pc.name, "Warrior");
             pc.health = 150;
             pc.attackPower = 20;
-            pc.defense = 15;
+            pc.defense;
             system("cls");
             break;
     }
@@ -82,7 +82,7 @@ int main() {
     char ch;
     int x, y = 10, consoleWidth, consoleHeight;
     int select = 1;
-    int bgcolor = 6; // Green background color
+    int bgcolor = 2; // Green background color
 
     // Get the console size and calculate the center x coordinate
     getConsoleSize(&consoleWidth, &consoleHeight);
@@ -107,7 +107,7 @@ int main() {
         printf("  Credits   ");
 
         gotoxy(x, y + 3);
-        setColor(select == 4 ? 15 : 7, select == 4 ? bgcolor : 0);
+        setColor(select == 4 ? 15 : 4, select == 4 ? bgcolor : 0);
         printf("  Exit      ");
 
         // Reset color after menu
@@ -172,15 +172,21 @@ void main_game() { // menu 1
 
     // skeleton information
     int skeleton_level = 1;
-    int skeleton_health = 5;
+    int skeleton_health = 100;
     int skeleton_defense = 2;
-    int skeleton_damage = 1;
+    int skeleton_damage = 10;
 
     // rat information
     int rat_level = 1;
-    int rat_health = 3;
-    int rat_defense = 1;
-    int rat_damage = 1;
+    int rat_health = 30;
+    int rat_defense;
+    int rat_damage = 5;
+
+    // slime information
+    int slime_level = 1;
+    int slime_health = 60;
+    int slime_defense = 1;
+    int slime_damage = 9;
 
     const char *message1 = "Villager: Hello Adventurer I'm a normal villager in here\n";
     const char *message2 = "Villager: So... I need you to help me something, did you see?\n";
@@ -334,7 +340,7 @@ void skeletonStatus() {
     printf("     // .=|=. \\\\\n");
     printf("     \\\\ .=|=. //\n");
     printf("Health: %d   Damage: %d\n", skeleton_health, skeleton_damage);
-    printf("-------------------------------------\n");
+    printf("-------------------------------\n");
     printf("[Battle](b) | [Flee](f): ");
 }
 
@@ -352,8 +358,27 @@ void ratStatus() {
     printf("    /| | | |\\\n");
     printf("   (_|_|_|_|_)\n");
     printf("Health: %d   Damage: %d\n", rat_health, rat_damage);
-    printf("-------------------------------------\n");
+    printf("-------------------------------\n");
     printf("[Battle](b): | [Flee](f): ");
+}
+
+void slimeStatus() {
+    int slime_level = 1;
+    int slime_health = 60;
+    int slime_defense = 1;
+    int slime_damage = 9;
+
+    printf("      [%d]Slime\n");
+    printf("       /\\     /\\\n");
+    printf("      /  \\___/  \\\n");
+    printf("     /   |    |  \\\n");
+    printf("    /             \\\n");
+    printf("   (_______________)\n");
+    printf("Health: %d   Damage: %d\n", slime_health, slime_damage);
+    printf("-------------------------------\n");
+    printf("[Battle](b): | [Flee](f): ");
+
+
 }
 
 void level_up(int *exp, int *level) {
