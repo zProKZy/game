@@ -7,11 +7,11 @@
 #include <windows.h>
 
 void getConsoleSize(int *width, int *height);
-void printWithAnimation(const char *text); // animation text chatgpt
+void printWithAnimation(const char *text);      // animation text chatgpt
 void setColor(int textColor, int bgColor);
-void level_up(int *exp, int *level); // level func
+void level_up(int *exp, int *level);            // level func
 void gotoxy(int x, int y);
-void delay(int second); // delay func
+void delay(int second);                         // delay func
 void skeletonStatus();
 void ratStatus();
 void main_game();
